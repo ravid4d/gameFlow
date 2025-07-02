@@ -4,6 +4,9 @@ import path from 'path';
 import {Server as socketIo} from 'socket.io';
 import { fileURLToPath } from 'url';
 import webRoutes from './routes/web.js';
+import apiRoutes from './routes/api.js';
+import dotenv from 'dotenv';
+
 
 import sequelize from './models/index.js';
 import chatSocket from './sockets/chatsocket.js';
@@ -15,6 +18,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new socketIo(server);
 
+dotenv.config();
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -24,6 +28,7 @@ app.set('views', path.join(__dirname, 'views'));
 const PORT = 3000;
 
 app.use('/',webRoutes);
+app.use('/api',apiRoutes);
 
 chatSocket(io);
 sequelize.sync();

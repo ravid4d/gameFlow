@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "./index.js"; // Add `.js` for ES Modules
+import sequelize from "./index.js"; // Assuming this exports the Sequelize instance
 
 const User = sequelize.define('User', {
   first_name: {
@@ -10,16 +10,25 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  date_of_birth: {
+    type: DataTypes.DATEONLY, // DATEONLY if you don't care about time
+    allowNull: false,
+  },
+  phone_number: {
+    type: DataTypes.STRING, // ✅ Use STRING instead of NUMBER
+    allowNull: false,
+    unique: true,
+  },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true, // Usually emails should be unique
+    unique: true,
     validate: {
-      isEmail: true, // Ensures valid email format
+      isEmail: true,
     },
   },
   email_verified_at: {
-    type: DataTypes.DATE, // ✅ Use DATE instead of TIMESTAMP
+    type: DataTypes.DATE,
     allowNull: true,
   },
   password: {
@@ -27,9 +36,9 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
 }, {
-  tableName: 'users', // Optional: specify table name
-  timestamps: true,   // ✅ Enables createdAt and updatedAt automatically
-  underscored: true,  // Maps to `created_at` and `updated_at` instead of camelCase
+  tableName: 'users',
+  timestamps: true,
+  underscored: true,
 });
 
 export default User;
