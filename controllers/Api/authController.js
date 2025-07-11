@@ -4,18 +4,12 @@ import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 
 export const register = async (req, res) => {
-  const errors = validationResult(req)
+const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const formattedErrors = {}
-
-    errors.array({ onlyFirstError: true }).forEach(err => {
-      formattedErrors[err.param] = err.msg
-    })
-
     return res.status(422).json({
       success: false,
-      errors: formattedErrors
-    })
+      errors: errors.array({ onlyFirstError: true })
+    });
   }
 
   const {
@@ -24,8 +18,8 @@ export const register = async (req, res) => {
     email,
     password,
     phone_number,
-    date_of_birth
-  } = req.body
+    date_of_birth,
+  } = req.body;
 
   try {
     const existingUser = await User.findOne({ where: { email } })

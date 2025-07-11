@@ -27,6 +27,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 const PORT = 3000;
 
+app.use(express.json());
 app.use('/',webRoutes);
 app.use('/api',apiRoutes);
 
