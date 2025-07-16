@@ -4,12 +4,12 @@ import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 
 export const register = async (req, res) => {
-const errors = validationResult(req);
+  const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(422).json({
       success: false,
       errors: errors.array({ onlyFirstError: true })
-    });
+    })
   }
 
   const {
@@ -19,7 +19,8 @@ const errors = validationResult(req);
     password,
     phone_number,
     date_of_birth,
-  } = req.body;
+    device_id
+  } = req.body
 
   try {
     const existingUser = await User.findOne({ where: { email } })
@@ -46,7 +47,8 @@ const errors = validationResult(req);
       email,
       phone_number,
       date_of_birth,
-      password: hashedPassword
+      password: hashedPassword,
+      device_id
     })
 
     // ✅ Generate JWT token
@@ -79,14 +81,47 @@ const errors = validationResult(req);
 }
 
 export const login = async (req, res) => {
-  const { email, password } = req.body
-  const user = await User.findOne({ where: { email } })
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      success: false,
+      errors: errors.array({ onlyFirstError: true })
+    })
+  }
+  try {
+    const { email, password } = req.body
+    const user = await User.findOne({ where: { email } })
 
-  if (!user) return res.render('login', { error: 'Invalid credentials' })
+    if (!user) return res.render('login', { error: 'Invalid credentials' })
 
-  const match = await bcrypt.compare(password, user.password)
-  if (!match) return res.render('login', { error: 'Invalid credentials' })
+    const match = await bcrypt.compare(password, user.password)
+    if (!match) return res.render('login', { error: 'Invalid credentials' })
 
-  // Success
-  res.render('dashboard', { user })
+    // Success
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || 'your_jwt_secret' // Put this in .env
+      //   { expiresIn: '1h' } // Valid for 1 hour
+    )
+    return res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      token: token, // ✅ Return the token
+      user: {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        date_of_birth: user.date_of_birth
+      }
+    })
+    // res.render('dashboard', { user })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({
+      success: false,
+      message: 'Server error'
+    })
+  }
 }
