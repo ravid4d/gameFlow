@@ -1,15 +1,25 @@
+import dotenv from 'dotenv';
+dotenv.config({ debug: true });
+console.log("DB info loaded:", {
+  user: process.env.DB_USERNAME,
+  pass: process.env.DB_PASSWORD,
+  db: process.env.DB_DATABASE,
+  host: process.env.DB_HOST,
+});
+
 import express from 'express';
 import http from 'http';
 import path from 'path';
 import {Server as socketIo} from 'socket.io';
 import { fileURLToPath } from 'url';
+
 import webRoutes from './routes/web.js';
 import apiRoutes from './routes/api.js';
-import dotenv from 'dotenv';
 
 
 import sequelize from './models/index.js';
 import chatSocket from './sockets/chatsocket.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,7 +28,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new socketIo(server);
 
-dotenv.config();
+
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
