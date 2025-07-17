@@ -1,7 +1,15 @@
-import { DataTypes } from "sequelize";
-import sequelize from "./index.js"; // Assuming this exports the Sequelize instance
+import { DataTypes, Model } from "sequelize";
+import sequelize from "./index.js";
 
-const User = sequelize.define('User', {
+class User extends Model {
+  toJSON() {
+    const values = { ...this.get() };
+    delete values.password; // Hide password
+    return values;
+  }
+}
+
+User.init({
   first_name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -11,11 +19,11 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
   date_of_birth: {
-    type: DataTypes.DATEONLY, // DATEONLY if you don't care about time
+    type: DataTypes.DATEONLY,
     allowNull: false,
   },
   phone_number: {
-    type: DataTypes.STRING, // ✅ Use STRING instead of NUMBER
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
@@ -35,11 +43,13 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  device_id :{
+  device_id: {
     type: DataTypes.STRING,
-    allowNull:true
-  }
+    allowNull: true,
+  },
 }, {
+  sequelize,
+  modelName: 'User',
   tableName: 'users',
   timestamps: true,
   underscored: true,
