@@ -15,13 +15,15 @@ export const listGames = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      message: 'Games fetched successfully',
       data: games
     })
   } catch (error) {
     console.error('Error fetching games:', error)
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
+      data: []
     })
   }
 }
@@ -31,7 +33,8 @@ export const createGame = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       success: false,
-      errors: errors.array({ onlyFirstError: true })
+      message: errors.array({ onlyFirstError: true }),
+      data: []
     })
   }
 
@@ -58,7 +61,8 @@ export const createGame = async (req, res) => {
     console.error('Error creating game:', error)
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
+      data: []
     })
   }
 }
@@ -68,7 +72,8 @@ export const joinGame = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       success: false,
-      errors: errors.array({ onlyFirstError: true })
+      message: errors.array({ onlyFirstError: true }),
+      data: []
     })
   }
 
@@ -80,14 +85,16 @@ export const joinGame = async (req, res) => {
     if (!game) {
       return res.status(404).json({
         success: false,
-        message: 'Game not found'
+        message: 'Game not found',
+        data: []
       })
     }
 
     if (game.status !== 'waiting') {
       return res.status(400).json({
         success: false,
-        message: 'Game is not available for joining'
+        message: 'Game is not available for joining',
+        data: []
       })
     }
 
@@ -104,7 +111,8 @@ export const joinGame = async (req, res) => {
     console.error('Error joining game:', error)
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
+      data: []
     })
   }
 }

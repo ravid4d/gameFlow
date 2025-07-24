@@ -7,7 +7,8 @@ export const profileUpdate = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(422).json({
         success: false,
-        errors: errors.array({ onlyFirstError: true })
+        message: errors.array({ onlyFirstError: true }),
+        data: []
       })
     }
     const userId = req.user.id // ✅ ID from JWT payload
@@ -17,7 +18,8 @@ export const profileUpdate = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
+        data: []
       })
     }
 
@@ -32,12 +34,13 @@ export const profileUpdate = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'User updated successfully',
-      user
-    })
+      data: user
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: 'Server error'
+      message: 'Server error',
+      data: []
     })
   }
 }

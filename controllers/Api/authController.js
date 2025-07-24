@@ -9,7 +9,8 @@ export const register = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       success: false,
-      errors: errors.array({ onlyFirstError: true })
+      message: errors.array({ onlyFirstError: true }),
+      data: []
     })
   }
 
@@ -28,7 +29,8 @@ export const register = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        message: 'Email already exists'
+        message: 'Email already exists',
+        data: []
       })
     }
 
@@ -36,7 +38,8 @@ export const register = async (req, res) => {
     if (existingPhone) {
       return res.status(409).json({
         success: false,
-        message: 'Phone number already exists'
+        message: 'Phone number already exists',
+        data: []
       })
     }
 
@@ -62,21 +65,24 @@ export const register = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: 'User registered successfully',
-      token: token, // ✅ Return the token
-      user: {
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone_number: user.phone_number,
-        date_of_birth: user.date_of_birth
+      data: {
+        user: {
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          phone_number: user.phone_number,
+          date_of_birth: user.date_of_birth
+        },
+        token: token
       }
     })
   } catch (error) {
     console.error(error)
     return res.status(500).json({
       success: false,
-      message: 'Server error'
+      message: 'Server error',
+      data: []
     })
   }
 }
@@ -86,7 +92,8 @@ export const login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       success: false,
-      errors: errors.array({ onlyFirstError: true })
+      message: errors.array({ onlyFirstError: true }),
+      data: []
     })
   }
 
@@ -97,7 +104,8 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
+        data: []
       })
     }
 
@@ -105,7 +113,8 @@ export const login = async (req, res) => {
     if (!match) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
+        data: []
       })
     }
 
@@ -118,14 +127,17 @@ export const login = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: 'User login successfully',
-      token: token, // ✅ Return the token
-      user: {
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone_number: user.phone_number,
-        date_of_birth: user.date_of_birth
+      // token: token, // ✅ Return the token
+      data: {
+        token: token,
+        user: {
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          phone_number: user.phone_number,
+          date_of_birth: user.date_of_birth
+        }
       }
     })
     // res.render('dashboard', { user })
@@ -133,7 +145,8 @@ export const login = async (req, res) => {
     console.error(error)
     return res.status(500).json({
       success: false,
-      message: 'Server error'
+      message: 'Server error',
+      data: []
     })
   }
 }
@@ -146,7 +159,8 @@ export const verifyEmail = async (req, res) => {
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: 'Email is required'
+        message: 'Email is required',
+        data: []
       })
     }
 
@@ -161,14 +175,15 @@ export const verifyEmail = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'OTP sent successfully',
-      otp // You might want to remove this in production
+      data: { email, otp } // For testing purposes, you might want to remove this in production
     })
   } catch (error) {
     console.error('Error sending OTP:', error.message)
 
     return res.status(500).json({
       success: false,
-      message: 'Server error'
+      message: 'Server error',
+      data: []
     })
   }
 }
