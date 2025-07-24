@@ -3,7 +3,7 @@ import transporter from '../config/mailer.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-class WelcomeMail {
+class VerificationMail {
   constructor(otp,email) {
     this.otp = otp;
     this.email = email;
@@ -24,4 +24,4 @@ class WelcomeMail {
   }
 }
 
-export default WelcomeMail;
+export default VerificationMail;

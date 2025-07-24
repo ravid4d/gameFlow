@@ -40,9 +40,19 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      device_id :{
-        type:Sequelize.STRING,
+      balance: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0.0
+      },
+      device_id: {
+        type: Sequelize.STRING,
         allowNull: true
+      },
+      is_active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
       },
       created_at: {
         allowNull: false,
@@ -52,10 +62,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    })
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('users')
   }
 }

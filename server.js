@@ -1,12 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config({ debug: true });
-console.log("DB info loaded:", {
-  user: process.env.DB_USERNAME,
-  pass: process.env.DB_PASSWORD,
-  db: process.env.DB_DATABASE,
-  host: process.env.DB_HOST,
-});
-
+dotenv.config();
 import express from 'express';
 import http from 'http';
 import path from 'path';
