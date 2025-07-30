@@ -7,11 +7,13 @@ import VerificationMail from '../../mails/EmailVerificationMail.js'
 export const register = async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
+     const message = errors.array().map(err => err.msg).join(', ');
+
     return res.status(422).json({
       success: false,
-      message: errors.array({ onlyFirstError: true }),
+      message: message,
       data: []
-    })
+    });
   }
 
   const {
@@ -90,11 +92,13 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
+    const message = errors.array().map(err => err.msg).join(', ');
+
     return res.status(422).json({
       success: false,
-      message: errors.array({ onlyFirstError: true }),
+      message: message,
       data: []
-    })
+    });
   }
 
   try {
@@ -187,3 +191,4 @@ export const verifyEmail = async (req, res) => {
     })
   }
 }
+

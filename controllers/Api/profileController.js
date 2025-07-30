@@ -5,11 +5,13 @@ export const profileUpdate = async (req, res) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(422).json({
-        success: false,
-        message: errors.array({ onlyFirstError: true }),
-        data: []
-      })
+      const message = errors.array().map(err => err.msg).join(', ');
+
+    return res.status(422).json({
+      success: false,
+      message: message,
+      data: []
+    });
     }
     const userId = req.user.id // ✅ ID from JWT payload
 

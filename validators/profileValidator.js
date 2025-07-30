@@ -3,7 +3,7 @@ import User from '../models/user.js';
 
 export const updateUserValidationRules = [
   body('first_name').notEmpty().withMessage('First name is required'),
-  body('last_name').notEmpty().withMessage('Last name is required'),
+  // body('last_name').notEmpty().withMessage('Last name is required'),
   body('email')
     .isEmail().withMessage('Invalid email')
     .custom(async (value, { req }) => {
