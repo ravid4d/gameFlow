@@ -17,7 +17,7 @@ User.init(
     },
     last_name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     date_of_birth: {
       type: DataTypes.DATEONLY,

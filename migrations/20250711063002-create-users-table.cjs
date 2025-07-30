@@ -16,7 +16,7 @@ module.exports = {
       },
       last_name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       date_of_birth: {
         type: Sequelize.DATEONLY,
