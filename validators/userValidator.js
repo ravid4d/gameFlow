@@ -4,8 +4,6 @@ import User from '../models/user.js' // adjust path if needed
 const userValidationRules = [
   body('first_name').notEmpty().withMessage('First name is required'),
 
-  // body('last_name').notEmpty().withMessage('Last name is required'),
-
   body('date_of_birth')
     .notEmpty()
     .withMessage('Date of birth is required')
