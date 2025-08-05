@@ -2,6 +2,7 @@ import ScratchGame from '../../models/scratch_game.js'
 import bcrypt from 'bcrypt'
 import { validationResult } from 'express-validator';
 import { Op } from 'sequelize';
+import { createGameList } from '../../sockets/utils/socketEmitter.js';
 
 export const listGames = async (req, res) => {
   try {
@@ -53,7 +54,7 @@ export const createGame = async (req, res) => {
       total_amount: total_amount,
       status: status
     });
-
+    createGameList('gameListUpdated', newGame); // Emit event to update game list
     return res.status(201).json({
       success: true,
       message: 'Game created successfully',

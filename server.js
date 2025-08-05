@@ -5,13 +5,14 @@ import http from 'http';
 import path from 'path';
 import {Server as socketIo} from 'socket.io';
 import { fileURLToPath } from 'url';
+import { setSocketInstance } from './sockets/utils/socketEmitter.js'; // <-- ADD THIS
 
 import webRoutes from './routes/web.js';
 import apiRoutes from './routes/api.js';
 
 
 import sequelize from './models/index.js';
-import chatSocket from './sockets/chatsocket.js';
+import registerSockets from './sockets/index.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,7 +35,8 @@ app.use(express.json());
 app.use('/',webRoutes);
 app.use('/api',apiRoutes);
 
-chatSocket(io);
+registerSockets(io);
+setSocketInstance(io);
 sequelize.sync();
 server.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
