@@ -7,13 +7,16 @@ import VerificationMail from '../../mails/EmailVerificationMail.js'
 export const register = async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-     const message = errors.array().map(err => err.msg).join(', ');
+    const message = errors
+      .array()
+      .map(err => err.msg)
+      .join(', ')
 
     return res.status(422).json({
       success: false,
       message: message,
       data: []
-    });
+    })
   }
 
   const {
@@ -92,13 +95,16 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    const message = errors.array().map(err => err.msg).join(', ');
+    const message = errors
+      .array()
+      .map(err => err.msg)
+      .join(', ')
 
     return res.status(422).json({
       success: false,
       message: message,
       data: []
-    });
+    })
   }
 
   try {
@@ -192,3 +198,50 @@ export const verifyEmail = async (req, res) => {
   }
 }
 
+export const forgetPassword = async (req, res) => {
+  try {
+    const { email, new_password, confirm_password } = req.body
+
+    if (!email || !new_password || !confirm_password) {
+      return res.status(422).json({
+        success: false,
+        message: 'Email, new password, and confirm password are required',
+        data: []
+      })
+    }
+
+    if (new_password !== confirm_password) {
+      return res.status(422).json({
+        success: false,
+        message: 'New password and Confirm password do not match',
+        data: []
+      })
+    }
+
+    const user = await User.findOne({ where: { email } })
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+        data: []
+      })
+    }
+
+    const hashedPassword = await bcrypt.hash(new_password, 10)
+    await user.update({ password: hashedPassword })
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password reset successfully',
+      data: []
+    })
+  } catch (error) {
+    console.error('Error resetting password:', error.message)
+
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      data: []
+    })
+  }
+}
