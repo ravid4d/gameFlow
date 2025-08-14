@@ -245,3 +245,46 @@ export const forgetPassword = async (req, res) => {
     })
   }
 }
+
+export const verifyEmailForForgetPassword = async (req, res) => {
+  try {
+    const { email } = req.query
+    // ✅ Validation
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required',
+        data: []
+      })
+    }
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Email not found',
+        data: []
+      });
+    }
+    // ✅ Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000)
+
+    // ✅ Send OTP using nodemailer (you can customize this part)
+    const mail = new VerificationMail(otp, email)
+    await mail.send()
+
+    // ✅ Return success response
+    return res.status(200).json({
+      success: true,
+      message: 'OTP sent successfully',
+      data: { email, otp } // For testing purposes, you might want to remove this in production
+    })
+  } catch (error) {
+    console.error('Error sending OTP:', error.message)
+
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      data: []
+    })
+  }
+}
