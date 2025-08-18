@@ -12,7 +12,7 @@ export const register = async (req, res) => {
       .map(err => err.msg)
       .join(', ')
 
-    return res.status(422).json({
+    return res.status(200).json({
       success: false,
       message: message,
       data: []
@@ -32,7 +32,7 @@ export const register = async (req, res) => {
   try {
     const existingUser = await User.findOne({ where: { email } })
     if (existingUser) {
-      return res.status(409).json({
+      return res.status(200).json({
         success: false,
         message: 'Email already exists',
         data: []
@@ -41,7 +41,7 @@ export const register = async (req, res) => {
 
     const existingPhone = await User.findOne({ where: { phone_number } })
     if (existingPhone) {
-      return res.status(409).json({
+      return res.status(200).json({
         success: false,
         message: 'Phone number already exists',
         data: []
@@ -100,7 +100,7 @@ export const login = async (req, res) => {
       .map(err => err.msg)
       .join(', ')
 
-    return res.status(422).json({
+    return res.status(200).json({
       success: false,
       message: message,
       data: []
@@ -112,7 +112,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ where: { email } })
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(200).json({
         success: false,
         message: 'Invalid credentials',
         data: []
@@ -121,7 +121,7 @@ export const login = async (req, res) => {
 
     const match = await bcrypt.compare(password, user.password)
     if (!match) {
-      return res.status(401).json({
+      return res.status(200).json({
         success: false,
         message: 'Invalid credentials',
         data: []
@@ -167,7 +167,7 @@ export const verifyEmail = async (req, res) => {
 
     // ✅ Validation
     if (!email) {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         message: 'Email is required',
         data: []
@@ -203,7 +203,7 @@ export const forgetPassword = async (req, res) => {
     const { email, new_password, confirm_password } = req.body
 
     if (!email || !new_password || !confirm_password) {
-      return res.status(422).json({
+      return res.status(200).json({
         success: false,
         message: 'Email, new password, and confirm password are required',
         data: []
@@ -211,7 +211,7 @@ export const forgetPassword = async (req, res) => {
     }
 
     if (new_password !== confirm_password) {
-      return res.status(422).json({
+      return res.status(200).json({
         success: false,
         message: 'New password and Confirm password do not match',
         data: []
@@ -220,7 +220,7 @@ export const forgetPassword = async (req, res) => {
 
     const user = await User.findOne({ where: { email } })
     if (!user) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
         message: 'User not found',
         data: []
@@ -251,7 +251,7 @@ export const verifyEmailForForgetPassword = async (req, res) => {
     const { email } = req.query
     // ✅ Validation
     if (!email) {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         message: 'Email is required',
         data: []
@@ -259,7 +259,7 @@ export const verifyEmailForForgetPassword = async (req, res) => {
     }
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
         message: 'Email not found',
         data: []

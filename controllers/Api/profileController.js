@@ -7,7 +7,7 @@ export const profileUpdate = async (req, res) => {
     if (!errors.isEmpty()) {
       const message = errors.array().map(err => err.msg).join(', ');
 
-    return res.status(422).json({
+    return res.status(200).json({
       success: false,
       message: message,
       data: []
@@ -18,7 +18,7 @@ export const profileUpdate = async (req, res) => {
     const user = await User.findByPk(userId)
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
         message: 'User not found',
         data: []

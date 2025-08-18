@@ -34,7 +34,7 @@ export const createGame = async (req, res) => {
   if (!errors.isEmpty()) {
     const message = errors.array().map(err => err.msg).join(', ');
 
-    return res.status(422).json({
+    return res.status(200).json({
       success: false,
       message: message,
       data: []
@@ -75,7 +75,7 @@ export const joinGame = async (req, res) => {
   if (!errors.isEmpty()) {
    const message = errors.array().map(err => err.msg).join(', ');
 
-    return res.status(422).json({
+    return res.status(200).json({
       success: false,
       message: message,
       data: []
@@ -88,7 +88,7 @@ export const joinGame = async (req, res) => {
 
     const game = await ScratchGame.findByPk(gameId)
     if (!game) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
         message: 'Game not found',
         data: []
@@ -96,7 +96,7 @@ export const joinGame = async (req, res) => {
     }
 
     if (game.status !== 'waiting') {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         message: 'Game is not available for joining',
         data: []
