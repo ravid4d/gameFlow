@@ -1,4 +1,5 @@
 import ScratchGame from '../../models/scratch_game.js'
+import User from '../../models/user.js'
 import bcrypt from 'bcrypt'
 import { validationResult } from 'express-validator';
 import { Op } from 'sequelize';
@@ -15,7 +16,7 @@ export const listGames = async (req, res) => {
         {
           model: User,
           as: "createdBy", // alias defined in association
-          attributes: ["id", "name"], // only fetch needed fields
+          attributes: ["first_name"], // only fetch needed fields
         },
       ],
       order: [["createdAt", "DESC"]],

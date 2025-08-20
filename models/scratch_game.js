@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from './index.js'; // your sequelize instance
+import User from './user.js'; // assuming you have a User model defined
 
 class ScratchGame extends Model {}
 
@@ -45,6 +46,7 @@ ScratchGame.init({
   underscored: true,
   timestamps: true,
 });
-
+ScratchGame.belongsTo(User, { foreignKey: "user1_id", as: "createdBy" });
+ScratchGame.belongsTo(User, { foreignKey: "user2_id", as: "joinedBy" });
 export default ScratchGame;
 
