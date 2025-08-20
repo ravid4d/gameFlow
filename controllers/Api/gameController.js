@@ -11,8 +11,15 @@ export const listGames = async (req, res) => {
         status: 'waiting',
         user1_id: { [Op.ne]: req.user.id }
       },
-      order: [['createdAt', 'DESC']]
-    })
+      include: [
+        {
+          model: User,
+          as: "createdBy", // alias defined in association
+          attributes: ["id", "name"], // only fetch needed fields
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
 
     return res.status(200).json({
       success: true,
