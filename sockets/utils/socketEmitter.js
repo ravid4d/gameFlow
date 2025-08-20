@@ -13,3 +13,11 @@ export const createGameList = (event, data) => {
     console.error('Socket instance is not set');
   }
 }
+
+export const updateGameList = (event, data) => {
+  if (ioInstance) {
+    ioInstance.emit(event, data);
+  } else {
+    console.error('Socket instance is not set');
+  }
+}

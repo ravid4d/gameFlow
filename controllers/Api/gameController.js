@@ -2,7 +2,7 @@ import ScratchGame from '../../models/scratch_game.js'
 import bcrypt from 'bcrypt'
 import { validationResult } from 'express-validator';
 import { Op } from 'sequelize';
-import { createGameList } from '../../sockets/utils/socketEmitter.js';
+import { createGameList,updateGameList } from '../../sockets/utils/socketEmitter.js';
 
 export const listGames = async (req, res) => {
   try {
@@ -106,7 +106,7 @@ export const joinGame = async (req, res) => {
     game.user2_id = user2_id;
     game.status = 'active';
     await game.save();
-
+    updateGameList('gameRemovedFromList', game); 
     return res.status(200).json({
       success: true,
       message: 'Joined game successfully',
