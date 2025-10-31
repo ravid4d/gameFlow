@@ -114,7 +114,7 @@ export const joinGame = async (req, res) => {
     game.user2_id = user2_id;
     game.status = 'active';
     await game.save();
-    updateGameList('gameRemovedFromList', game); 
+    updateGameList('gameRemovedFromList', game);
     return res.status(200).json({
       success: true,
       message: 'Joined game successfully',
@@ -129,3 +129,4 @@ export const joinGame = async (req, res) => {
     })
   }
 }
+

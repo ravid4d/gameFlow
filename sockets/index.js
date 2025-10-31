@@ -1,9 +1,17 @@
-import chatSocket from './chatsocket.js';
-// import gameSocket from './gameSocket.js';
+import chatSocket from './chatsocket.js'
+import gameSocket from './gameSocket.js';
 
-const registerSockets = (io) => {
-  chatSocket(io);
-//   gameSocket(io);
-};
+const registerSockets = io => {
+  io.on('connection', socket => {
+    console.log('A user connected:', socket.id)
+    
+     chatSocket(io,socket);
+     gameSocket(io, socket);
 
-export default registerSockets;
+    socket.on('disconnect', () => {
+      console.log('User disconnected:', socket.id)
+    })
+  })
+}
+
+export default registerSockets

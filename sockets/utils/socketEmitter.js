@@ -21,3 +21,11 @@ export const updateGameList = (event, data) => {
     console.error('Socket instance is not set');
   }
 }
+
+export const joinGameList = (event, data) => {
+  if (ioInstance) {
+    ioInstance.emit(event, data); // Emit to all connected clients
+  } else {
+    console.error('Socket instance is not set');
+  }
+}
