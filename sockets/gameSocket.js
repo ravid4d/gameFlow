@@ -1,3 +1,5 @@
+import ScratchGameMove from '../models/scratch_game_move.js';
+
 const gameSocket = (io, socket) => {
   socket.on('joinGameRoom', gameId => {
     const roomName = `game_${gameId}`
@@ -7,20 +9,21 @@ const gameSocket = (io, socket) => {
 
   socket.on('playerMove', async (data) => {
     try {
-      const { gameId, move } = data;
+      const { gameId, box_number,userId , is_winner} = data;
       const roomName = `game_${gameId}`;
 
       // ✅ Save move in DB
-    //   const savedMove = await GameMove.create({
-    //     game_id: gameId,
-    //     move_data: JSON.stringify(move),
-    //     made_by: socket.id,
-    //   });
+      const savedMove = await ScratchGameMove.create({
+        game_id: gameId,
+        user_id: userId,
+        box_number: box_number,
+        is_winner: is_winner || false,
+      });
 
     console.log(`Move saved for game ${gameId}`);
     console.log(gameId);
       // 📡 Notify both players in the same room
-      io.to(roomName).emit('moveMade', { gameId, move });
+      io.to(roomName).emit('moveMade', { gameId, box_number, userId, moveId: savedMove.id });
 
     } catch (error) {
       console.error('Error saving move:', error);
