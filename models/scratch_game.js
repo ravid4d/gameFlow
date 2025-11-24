@@ -39,6 +39,10 @@ ScratchGame.init({
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  winner_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 }, {
   sequelize,
   modelName: 'ScratchGame',

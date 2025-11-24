@@ -1,13 +1,18 @@
-import db from '../models/index.js'
+import sequelize from '../models/index.js'
+import { Sequelize } from 'sequelize';
+import ScratchGame from '../models/scratch_game.js'
+import User from '../models/user.js'
+import ScratchGameMove from '../models/scratch_game_move.js'
 
 const processMove = async (gameId, box_number, userId, is_winner) => {
-  return await db.sequelieze.transaction(async t => {
-    const game = await db.ScratchGame.findByPk(gameId, { transaction: t })
+  return await sequelize.transaction(async t => {
+    console.log('Processing move:', { gameId, box_number, userId, is_winner });
+    const game = await  ScratchGame.findByPk(gameId, { transaction: t })
     if (!game) {
       throw new Error('Game not found')
     }
 
-    const savedMove = await db.ScratchGameMove.create(
+    const savedMove = await ScratchGameMove.create(
       {
         game_id: gameId,
         user_id: userId,
@@ -31,16 +36,16 @@ const processMove = async (gameId, box_number, userId, is_winner) => {
     const winnerId = userId
     const loserId = game.user1_id === userId ? game.user2_id : game.user1_id
 
-    const entryFee = game.entry_fee
-    const winner = await db.User.findByPk(winnerId, { transaction: t })
-    const loser = await db.User.findByPk(loserId, { transaction: t })
+    const entryFee = game.game_amount;
+    const winner = await User.findByPk(winnerId, { transaction: t });
+    const loser = await User.findByPk(loserId, { transaction: t });
 
     if (loser.balance < entryFee) {
       throw new Error('Loser has insufficient balance')
     }
 
-    loser.wallet_balance -= entryFee
-    winner.wallet_balance += entryFee
+    loser.balance -= entryFee
+    winner.balance += entryFee
 
     await loser.save({ transaction: t })
     await winner.save({ transaction: t })
@@ -66,8 +71,8 @@ const processMove = async (gameId, box_number, userId, is_winner) => {
   })
 }
 const leaveGameRoom = async (gameId, userId) => {
-  return await db.sequelieze.transaction(async t => {
-    const game = await db.ScratchGame.findByPk(gameId, { transaction: t })  
+  return await sequelize.transaction(async t => {
+    const game = await ScratchGame.findByPk(gameId, { transaction: t })  
     if (!game) {
       throw new Error('Game not found')
     }   
@@ -75,16 +80,19 @@ const leaveGameRoom = async (gameId, userId) => {
     const loserId = userId;
     const winnerId = game.user1_id === userId ? game.user2_id : game.user1_id;
 
-    const entryFee = game.entry_fee
-    const winner = await db.User.findByPk(winnerId, { transaction: t })
-    const loser = await db.User.findByPk(loserId, { transaction: t })
-
-    if (loser.balance < entryFee) {
+    const entryFee = parseFloat(game.game_amount);
+    const winner = await User.findByPk(winnerId, { transaction: t })
+    const loser = await User.findByPk(loserId, { transaction: t })
+    
+    console.log('Processing leave game:', (loser.balance < entryFee));
+    console.log('Entry Fee:', entryFee);
+    console.log('Loser Balance:', loser.balance);
+    if (parseFloat(loser.balance) < entryFee) {
       throw new Error('Loser has insufficient balance')
     }
 
-    loser.wallet_balance -= entryFee
-    winner.wallet_balance += entryFee
+    loser.balance -= entryFee
+    winner.balance += entryFee
 
     await loser.save({ transaction: t })
     await winner.save({ transaction: t })
@@ -93,10 +101,16 @@ const leaveGameRoom = async (gameId, userId) => {
     game.leave_user_id = userId;
     game.winner_id = winnerId;
     await game.save({ transaction: t })
-87 
-    return { message: `User ${userId} left the game ${gameId}. Game marked as abandoned.` }
+     return {
+      gameFinished: true,
+      gameResult: {
+        winnerId,
+        loserId,
+        message: `User ${userId} left the game ${gameId}. Game marked as leaved.`
+      }
+    };
   });
   
 }
 
-export default { processMove }
+export default { processMove,leaveGameRoom }
