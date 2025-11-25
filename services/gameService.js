@@ -36,22 +36,24 @@ const processMove = async (gameId, box_number, userId, is_winner) => {
     const winnerId = userId
     const loserId = game.user1_id === userId ? game.user2_id : game.user1_id
 
-    const entryFee = game.game_amount;
+    const entryFee = parseFloat(game.game_amount);
     const winner = await User.findByPk(winnerId, { transaction: t });
     const loser = await User.findByPk(loserId, { transaction: t });
+    const loserBalance = parseFloat(loser.balance);
+    const winnerBalance = parseFloat(winner.balance);
 
-    if (loser.balance < entryFee) {
+    if (loserBalance < entryFee) {
       throw new Error('Loser has insufficient balance')
     }
 
-    loser.balance -= entryFee
-    winner.balance += entryFee
+    loser.balance = (loserBalance - entryFee).toFixed(2);
+    winner.balance = (winnerBalance + entryFee).toFixed(2);
 
     await loser.save({ transaction: t })
     await winner.save({ transaction: t })
 
-    game.status = 'completed'
-    game.winner_id = winnerId
+    game.status = 'completed';
+    game.winner_id = winnerId;
     await game.save({ transaction: t })
 
     return {
@@ -83,16 +85,15 @@ const leaveGameRoom = async (gameId, userId) => {
     const entryFee = parseFloat(game.game_amount);
     const winner = await User.findByPk(winnerId, { transaction: t })
     const loser = await User.findByPk(loserId, { transaction: t })
-    
-    console.log('Processing leave game:', (loser.balance < entryFee));
-    console.log('Entry Fee:', entryFee);
-    console.log('Loser Balance:', loser.balance);
-    if (parseFloat(loser.balance) < entryFee) {
+
+    const loserBalance = parseFloat(loser.balance);
+    const winnerBalance = parseFloat(winner.balance);
+    if (loserBalance < entryFee) {
       throw new Error('Loser has insufficient balance')
     }
 
-    loser.balance -= entryFee
-    winner.balance += entryFee
+    loser.balance = (loserBalance - entryFee).toFixed(2);
+    winner.balance = (winnerBalance + entryFee).toFixed(2);
 
     await loser.save({ transaction: t })
     await winner.save({ transaction: t })
@@ -110,7 +111,6 @@ const leaveGameRoom = async (gameId, userId) => {
       }
     };
   });
-  
 }
 
 export default { processMove,leaveGameRoom }
