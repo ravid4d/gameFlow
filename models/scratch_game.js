@@ -43,6 +43,10 @@ ScratchGame.init({
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  winner_box_number : {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  }
 }, {
   sequelize,
   modelName: 'ScratchGame',
@@ -52,5 +56,7 @@ ScratchGame.init({
 });
 ScratchGame.belongsTo(User, { foreignKey: "user1_id", as: "createdBy" });
 ScratchGame.belongsTo(User, { foreignKey: "user2_id", as: "joinedBy" });
+
+
 export default ScratchGame;
 

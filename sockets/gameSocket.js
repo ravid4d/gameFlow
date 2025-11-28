@@ -8,10 +8,17 @@ const gameSocket = (io, socket) => {
     console.log(`Socket ${socket.id} joined room ${roomName}`)
   })
 
+  socket.on('startGame', data => {
+    const roomName = `game_${data.gameId}`;
+    const result = gameService.startGame(data.gameId);
+    io.to(roomName).emit('gameStarted',result.gameResult);
+    console.log(`Game started in room ${roomName}`)
+  });
+  
   socket.on('playerMove', async data => {
     try {
-      const { gameId, box_number, userId, is_winner } = data
-      const result = await gameService.processMove(gameId, box_number, userId, is_winner);
+      const { gameId, box_number, userId } = data
+      const result = await gameService.processMove(gameId, box_number, userId)
 
       console.log(`Move saved for game ${gameId}`)
       console.log(gameId)
@@ -25,21 +32,35 @@ const gameSocket = (io, socket) => {
       console.error('Error saving move:', error)
       socket.emit('error', { message: 'Failed to save move' })
     }
-  })
+  });
 
   socket.on('leaveGameRoom', async data => {
-    try{
+    try {
       const { gameId, userId } = data
-    const roomName = `game_${data.gameId}`
-    const result = await gameService.leaveGameRoom(gameId, userId);
-    io.to(`game_${data.gameId}`).emit('gameOver', result.gameResult)
-    socket.leave(roomName)
-    console.log(`Socket ${socket.id} left room ${roomName}`)
+      const roomName = `game_${data.gameId}`
+      const result = await gameService.leaveGameRoom(gameId, userId)
+      io.to(`game_${data.gameId}`).emit('gameOver', result.gameResult)
+      socket.leave(roomName)
+      console.log(`Socket ${socket.id} left room ${roomName}`)
     } catch (error) {
       console.error('Error leaving game room:', error)
       socket.emit('error', { message: 'Failed to leave game room' })
     }
-  });
+  })
+
+  socket.on('cancelGame', async data => {
+    try {
+      const { gameId, userId } = data
+      const roomName = `game_${data.gameId}`
+      const result = await gameService.cancelGame(gameId, userId);
+      io.to(`game_${data.gameId}`).emit('gameCancelled', result.gameResult);
+      socket.leave(roomName);
+      console.log(`Socket ${socket.id} left room ${roomName}`);
+    } catch (error) {
+      console.error('Error cancelling game:', error)
+      socket.emit('error', { message: 'Failed to cancel game' })
+    }
+  })
 }
 
-export default gameSocket
+export default gameSocket;

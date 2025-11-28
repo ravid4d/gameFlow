@@ -45,7 +45,7 @@ export const createGame = async (req, res) => {
     return res.status(200).json({
       success: false,
       message: message,
-      data: []
+      data: [] 
     });
   }
 
@@ -54,13 +54,15 @@ export const createGame = async (req, res) => {
     const user1_id = req.user.id // Assuming user ID is available in req.userconst
     const game_amount = req.body.game_amount
     const total_amount = game_amount * 2 // Assuming both players contribute equally
-    const status = 'waiting'
+    const status = 'waiting';
+    const winner_box_number = Math.floor(Math.random() * 9)+1; // Random box number between 1 and 9
     const newGame = await ScratchGame.create({
       title: title,
       user1_id: user1_id,
       game_amount: game_amount,
       total_amount: total_amount,
-      status: status
+      status: status,
+      winner_box_number: winner_box_number
     });
     createGameList('gameListUpdated', newGame); // Emit event to update game list
     return res.status(201).json({
